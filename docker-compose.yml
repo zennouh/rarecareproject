@@ -1,0 +1,179 @@
+version: '3.8'
+
+services:
+  # --- API Gateway / Reverse Proxy ---
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./services:/var/www/html
+    depends_on:
+      - patients
+      - maladie
+      - traitment
+      - medical-dossier
+      - autontification
+      - autorisation
+    networks:
+      - rarecare-network
+
+  # --- Microservices ---
+  patients:
+    build:
+      context: ./services/patients
+      dockerfile: Dockerfile
+    volumes:
+      - ./services/patients:/var/www/html
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: pg_db
+      DB_PORT: 5432
+      DB_DATABASE: patients_db
+      DB_USERNAME: rarecare
+      DB_PASSWORD: rarecare_password
+    depends_on:
+      - pg_db
+    networks:
+      - rarecare-network
+
+  maladie:
+    build:
+      context: ./services/maladie
+      dockerfile: Dockerfile
+    volumes:
+      - ./services/maladie:/var/www/html
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql_db
+      DB_PORT: 3306
+      DB_DATABASE: maladie_db
+      DB_USERNAME: rarecare
+      DB_PASSWORD: rarecare_password
+    depends_on:
+      - mysql_db
+    networks:
+      - rarecare-network
+
+  traitment:
+    build:
+      context: ./services/traitment
+      dockerfile: Dockerfile
+    volumes:
+      - ./services/traitment:/var/www/html
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql_db
+      DB_PORT: 3306
+      DB_DATABASE: traitment_db
+      DB_USERNAME: rarecare
+      DB_PASSWORD: rarecare_password
+    depends_on:
+      - mysql_db
+    networks:
+      - rarecare-network
+
+  medical-dossier:
+    build:
+      context: ./services/medical-dossier
+      dockerfile: Dockerfile
+    volumes:
+      - ./services/medical-dossier:/var/www/html
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql_db
+      DB_PORT: 3306
+      DB_DATABASE: dossier_db
+      DB_USERNAME: rarecare
+      DB_PASSWORD: rarecare_password
+    depends_on:
+      - mysql_db
+    networks:
+      - rarecare-network
+
+  autontification:
+    build:
+      context: ./services/autontification
+      dockerfile: Dockerfile
+    volumes:
+      - ./services/autontification:/var/www/html
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql_db
+      DB_PORT: 3306
+      DB_DATABASE: auth_db
+      DB_USERNAME: rarecare
+      DB_PASSWORD: rarecare_password
+    depends_on:
+      - mysql_db
+    networks:
+      - rarecare-network
+
+  autorisation:
+    build:
+      context: ./services/autorisation
+      dockerfile: Dockerfile
+    volumes:
+      - ./services/autorisation:/var/www/html
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql_db
+      DB_PORT: 3306
+      DB_DATABASE: rbac_db
+      DB_USERNAME: rarecare
+      DB_PASSWORD: rarecare_password
+    depends_on:
+      - mysql_db
+    networks:
+      - rarecare-network
+
+  # --- Infrastructure ---
+  pg_db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: rarecare
+      POSTGRES_PASSWORD: rarecare_password
+      POSTGRES_DB: patients_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    networks:
+      - rarecare-network
+
+  mysql_db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_USER: rarecare
+      MYSQL_PASSWORD: rarecare_password
+      # To initialize multiple databases, we'll use a script in docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init-mysql:/docker-entrypoint-initdb.d
+    networks:
+      - rarecare-network
+
+  redis:
+    image: redis:alpine
+    networks:
+      - rarecare-network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - rarecare-network
+
+networks:
+  rarecare-network:
+    driver: bridge
+
+volumes:
+  pg-data:
+  mysql-data:
