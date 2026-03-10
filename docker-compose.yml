@@ -9,13 +9,6 @@ services:
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - ./services:/var/www/html
-    depends_on:
-      - patients
-      - maladie
-      - traitment
-      - medical-dossier
-      - autontification
-      - autorisation
     networks:
       - rarecare-network
 
@@ -23,9 +16,10 @@ services:
   patients:
     build:
       context: ./services/patients
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     volumes:
       - ./services/patients:/var/www/html
+      - ./services/patients/docker/apache.conf:/etc/apache2/sites-available/000-default.conf:ro
     environment:
       DB_CONNECTION: pgsql
       DB_HOST: pg_db
@@ -41,9 +35,10 @@ services:
   maladie:
     build:
       context: ./services/maladie
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     volumes:
       - ./services/maladie:/var/www/html
+      - ./services/maladie/docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
     environment:
       DB_CONNECTION: mysql
       DB_HOST: mysql_db
@@ -56,17 +51,18 @@ services:
     networks:
       - rarecare-network
 
-  traitment:
+  traitement:
     build:
-      context: ./services/traitment
-      dockerfile: Dockerfile
+      context: ./services/traitement
+      dockerfile: docker/Dockerfile
     volumes:
-      - ./services/traitment:/var/www/html
+      - ./services/traitement:/var/www/html
+      - ./services/traitement/docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
     environment:
       DB_CONNECTION: mysql
       DB_HOST: mysql_db
       DB_PORT: 3306
-      DB_DATABASE: traitment_db
+      DB_DATABASE: traitement_db
       DB_USERNAME: rarecare
       DB_PASSWORD: rarecare_password
     depends_on:
@@ -77,9 +73,10 @@ services:
   medical-dossier:
     build:
       context: ./services/medical-dossier
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     volumes:
       - ./services/medical-dossier:/var/www/html
+      - ./services/medical-dossier/docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
     environment:
       DB_CONNECTION: mysql
       DB_HOST: mysql_db
@@ -92,12 +89,13 @@ services:
     networks:
       - rarecare-network
 
-  autontification:
+  authentification:
     build:
-      context: ./services/autontification
-      dockerfile: Dockerfile
+      context: ./services/authentification
+      dockerfile: docker/Dockerfile
     volumes:
-      - ./services/autontification:/var/www/html
+      - ./services/authentification:/var/www/html
+      - ./services/authentification/docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
     environment:
       DB_CONNECTION: mysql
       DB_HOST: mysql_db
@@ -113,9 +111,10 @@ services:
   autorisation:
     build:
       context: ./services/autorisation
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     volumes:
       - ./services/autorisation:/var/www/html
+      - ./services/autorisation/docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
     environment:
       DB_CONNECTION: mysql
       DB_HOST: mysql_db

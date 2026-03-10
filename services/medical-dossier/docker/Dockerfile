@@ -1,5 +1,5 @@
-# Use PHP 8.3 FPM image
-FROM php:8.3-fpm-alpine
+# Use PHP 8.3 Nginx image
+FROM webdevops/php-nginx:8.3-alpine
 
 # Set working directory
 WORKDIR /var/www/html
@@ -26,14 +26,17 @@ RUN docker-php-ext-install \
     zip \
     intl
 
+# Set Document Root for webdevops image
+ENV WEB_DOCUMENT_ROOT=/var/www/html/public
+
+# Copy local Nginx configuration
+COPY docker/nginx.conf /opt/docker/etc/nginx/vhost.conf
+
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy project files (if any exist)
-# COPY . .
+# Copy application files
+COPY . .
 
 # Set permissions
-# RUN chown -R www-data:www-data /var/www/html
-
-# Start php-fpm
-CMD ["php-fpm"]
+RUN chown -R www-data:www-data /var/www/html

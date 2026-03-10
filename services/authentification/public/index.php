@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 echo json_encode([
-    'service' => 'traitment',
+    'service' => 'authentification',
     'status' => 'ok',
-    'message' => 'Welcome to Traitment Service'
+    'message' => 'Welcome to Authentification Service'
 ]);
