@@ -1,39 +1,24 @@
-# Use PHP 8.3 FPM image
-FROM php:8.3-fpm-alpine
+FROM php:8.4-cli
 
-# Set working directory
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    libpq-dev \
+    libzip-dev \
+    zip \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip opcache \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pecl install amqp \
+&& docker-php-ext-enable amqp
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /var/www/html
 
-# Install system dependencies and PHP extensions
-RUN apk add --no-cache \
-    libpng-dev \
-    libzip-dev \
-    libxml2-dev \
-    oniguruma-dev \
-    postgresql-dev \
-    icu-dev \
-    git \
-    unzip
+EXPOSE 8000
 
-RUN docker-php-ext-install \
-    pdo_mysql \
-    pdo_pgsql \
-    mbstring \
-    exif \
-    pcntl \
-    bcmath \
-    gd \
-    zip \
-    intl
-
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Copy project files (if any exist)
-# COPY . .
-
-# Set permissions
-# RUN chown -R www-data:www-data /var/www/html
-
-# Start php-fpm
-CMD ["php-fpm"]
+CMD php -S 0.0.0.0:8000 public/index.php
