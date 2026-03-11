@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  patient:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: patient-service
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8005}:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/apache.conf:/etc/apache2/sites-available/000-default.conf:ro
+    env_file:
+      - .env
+    depends_on:
+      - patient-db
+    networks:
+      - patient-network
+
+  patient-db:
+    image: postgres:15-alpine
+    container_name: patient-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-rarecare}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-rarecare_password}
+      POSTGRES_DB: ${DB_DATABASE:-patient_db}
+    ports:
+      - "${DB_PORT_EXPOSE:-54321}:5432"
+    volumes:
+      - patient-db-data:/var/lib/postgresql/data
+    networks:
+      - patient-network
+
+networks:
+  patient-network:
+    driver: bridge
+
+volumes:
+  patient-db-data:

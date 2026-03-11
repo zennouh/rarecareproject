@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  disease:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: disease-service
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8003}:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
+    env_file:
+      - .env
+    depends_on:
+      - disease-db
+    networks:
+      - disease-network
+
+  disease-db:
+    image: mysql:8.0
+    container_name: disease-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password}
+      MYSQL_DATABASE: ${DB_DATABASE:-disease_db}
+      MYSQL_USER: ${DB_USERNAME:-rarecare}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-rarecare_password}
+    ports:
+      - "${DB_PORT_EXPOSE:-33063}:3306"
+    volumes:
+      - disease-db-data:/var/lib/mysql
+    networks:
+      - disease-network
+
+networks:
+  disease-network:
+    driver: bridge
+
+volumes:
+  disease-db-data:
