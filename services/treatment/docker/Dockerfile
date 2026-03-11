@@ -38,5 +38,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copy application files
 COPY . .
 
+# Install Composer dependencies and generate API docs
+RUN cd api && composer install --no-dev --optimize-autoloader --no-interaction \
+    && mkdir -p storage/api-docs \
+    && ./vendor/bin/openapi --output storage/api-docs/api-docs.json app/Http
+
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html

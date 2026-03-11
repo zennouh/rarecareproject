@@ -10,13 +10,18 @@ docs/
 .idea/
 .vscode/
 
-# Local Environment Files
-*.env.local
+# Environment Files (never bake secrets into images)
+.env
+.env.*
+!.env.example
+
+# Docker files (not needed inside container)
 docker-compose.yml
 docker-compose.override.yml
+docker/
 
 # Compiled and Dependency Folders
-# (Ideally, Dockerfiles install their own dependencies)
+# (Dockerfiles install their own dependencies)
 **/node_modules/
 **/vendor/
 **/dist/
