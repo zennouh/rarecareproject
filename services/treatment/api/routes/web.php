@@ -16,3 +16,9 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->get('/treatments', 'TreatmentController@index');
+$router->post('/treatments', 'TreatmentController@store');
+$router->get('/treatments/{id}', 'TreatmentController@show');
+$router->put('/treatments/{id}', 'TreatmentController@update');
+$router->delete('/treatments/{id}', 'TreatmentController@destroy');
