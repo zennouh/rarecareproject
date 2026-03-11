@@ -1,0 +1,54 @@
+services:
+  patients:
+    build:
+      context: .
+      dockerfile: docker/dockerfile
+    container_name: patients_container 
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html 
+    depends_on:
+      - patients_db
+    networks:
+      - patients_network
+
+  patients_db:
+    image: postgres:16
+    container_name: patients_db_container
+    environment:
+      - POSTGRES_USER=nouh
+      - POSTGRES_PASSWORD=nouh2001
+      - POSTGRES_DB=patients_db_name
+    ports:
+      - "5432:5432"
+    volumes:
+      - patients_db_data:/var/lib/postgresql/data
+    networks:
+      - patients_network
+
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_container
+    ports:
+      - "5672:5672"     
+      - "15672:15672"   
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - app_network
+      - patients_network
+
+networks:
+  patients_network:
+    driver: bridge
+  app_network:
+    driver: bridge    
+
+volumes:
+  patients_db_data:
+  rabbitmq_data:
