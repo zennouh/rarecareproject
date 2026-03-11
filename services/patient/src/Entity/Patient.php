@@ -5,14 +5,18 @@ namespace App\Entity;
 use App\Repository\PatientRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use OpenApi\Attributes as OA;
 
 #[ORM\Entity(repositoryClass: PatientRepository::class)]
+
+
 #[ORM\Table(name: 'patients')]
 class Patient
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[OA\Property(description: "the id of the patient", example: 1)]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -74,7 +78,7 @@ class Patient
         return $this->birthday;
     }
 
-   
+
     public function getAge(): ?int
 
     {
