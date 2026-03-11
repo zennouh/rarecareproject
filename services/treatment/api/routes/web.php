@@ -17,6 +17,10 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
+$router->get('api/docs', function() {
+    return response()->json(json_decode(file_get_contents(storage_path('api-docs/api-docs.json'))));
+});
+
 $router->get('/treatments', 'TreatmentController@index');
 $router->post('/treatments', 'TreatmentController@store');
 $router->get('/treatments/{id}', 'TreatmentController@show');
