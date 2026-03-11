@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  medical-record:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: medical-record-service
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8004}:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
+    env_file:
+      - .env
+    depends_on:
+      - medical-record-db
+    networks:
+      - medical-record-network
+
+  medical-record-db:
+    image: mysql:8.0
+    container_name: medical-record-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password}
+      MYSQL_DATABASE: ${DB_DATABASE:-medical_record_db}
+      MYSQL_USER: ${DB_USERNAME:-rarecare}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-rarecare_password}
+    ports:
+      - "${DB_PORT_EXPOSE:-33064}:3306"
+    volumes:
+      - medical-record-db-data:/var/lib/mysql
+    networks:
+      - medical-record-network
+
+networks:
+  medical-record-network:
+    driver: bridge
+
+volumes:
+  medical-record-db-data:

@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  authentication:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: authentication-service
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8001}:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
+    env_file:
+      - .env
+    depends_on:
+      - authentication-db
+    networks:
+      - authentication-network
+
+  authentication-db:
+    image: mysql:8.0
+    container_name: authentication-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password}
+      MYSQL_DATABASE: ${DB_DATABASE:-auth_db}
+      MYSQL_USER: ${DB_USERNAME:-rarecare}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-rarecare_password}
+    ports:
+      - "${DB_PORT_EXPOSE:-33061}:3306"
+    volumes:
+      - authentication-db-data:/var/lib/mysql
+    networks:
+      - authentication-network
+
+networks:
+  authentication-network:
+    driver: bridge
+
+volumes:
+  authentication-db-data:
