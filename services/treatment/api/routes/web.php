@@ -18,7 +18,16 @@ $router->get('/', function () use ($router) {
 });
 
 $router->get('api/docs', function() {
-    return response()->json(json_decode(file_get_contents(storage_path('api-docs/api-docs.json'))));
+    $path = storage_path('api-docs/api-docs.json');
+    if (file_exists($path)) {
+        return response()->json(json_decode(file_get_contents($path)));
+    }
+    return response()->json(['error' => 'Documentation not found'], 404);
+});
+
+$router->get('api/documentation', function() {
+    $path = base_path('resources/views/swagger.html');
+    return response(file_get_contents($path), 200)->header('Content-Type', 'text/html');
 });
 
 $router->get('/treatments', 'TreatmentController@index');

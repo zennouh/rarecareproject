@@ -1,0 +1,260 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Treatment API",
+        "description": "Micro-service for managing rare disease treatments",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8006",
+            "description": "Serveur Local"
+        }
+    ],
+    "paths": {
+        "/api/treatments": {
+            "get": {
+                "tags": [
+                    "Treatments"
+                ],
+                "summary": "List all treatments with pagination",
+                "operationId": "44221bf51fcb8386d991b9bb1fdecebb",
+                "responses": {
+                    "200": {
+                        "description": "Paginated list of treatments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "current_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "patient_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "medication_name": {
+                                                        "type": "string",
+                                                        "example": "Aspirin"
+                                                    },
+                                                    "dosage": {
+                                                        "type": "string",
+                                                        "example": "500mg"
+                                                    },
+                                                    "frequency": {
+                                                        "type": "string",
+                                                        "example": "3x/day"
+                                                    },
+                                                    "start_date": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2026-03-11"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 50
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 4
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Treatments"
+                ],
+                "summary": "Create a new treatment",
+                "operationId": "403a1f741c295377385d7eb7357d4a63",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "patient_id",
+                                    "medication_name",
+                                    "dosage",
+                                    "frequency",
+                                    "start_date"
+                                ],
+                                "properties": {
+                                    "patient_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "medication_name": {
+                                        "type": "string",
+                                        "example": "Aspirin"
+                                    },
+                                    "dosage": {
+                                        "type": "string",
+                                        "example": "500mg"
+                                    },
+                                    "frequency": {
+                                        "type": "string",
+                                        "example": "3x/day"
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-03-11"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Treatment created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/treatments/{id}": {
+            "get": {
+                "tags": [
+                    "Treatments"
+                ],
+                "summary": "Get a specific treatment",
+                "operationId": "28c01ee67e8569b929a5920d07aeaad4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the treatment",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Treatment found"
+                    },
+                    "404": {
+                        "description": "Treatment not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Treatments"
+                ],
+                "summary": "Update a treatment",
+                "operationId": "72a0b84d61282ba7b8c842a4228c3727",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "patient_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "medication_name": {
+                                        "type": "string",
+                                        "example": "Aspirin"
+                                    },
+                                    "dosage": {
+                                        "type": "string",
+                                        "example": "500mg"
+                                    },
+                                    "frequency": {
+                                        "type": "string",
+                                        "example": "3x/day"
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-03-11"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Treatment updated successfully"
+                    },
+                    "404": {
+                        "description": "Treatment not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Treatments"
+                ],
+                "summary": "Delete a treatment",
+                "operationId": "9d4e247ebdafac746df0fca5df59d9fc",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Treatment deleted successfully"
+                    },
+                    "404": {
+                        "description": "Treatment not found"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Treatments",
+            "description": "Treatments"
+        }
+    ]
+}
