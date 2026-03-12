@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: 'RareCare API'
+  title: 'MALADIES API'
   description: "Documentation de l'API"
   version: 1.0.0
 servers:
@@ -12,11 +12,55 @@ paths:
     get:
       tags:
         - Maladie
-      summary: 'Lister toutes les maladies'
+      summary: 'Lister toutes les maladies avec filtres et pagination'
       operationId: 468a6ccab486087f8b8394f8f5dc0d63
+      parameters:
+        -
+          name: name
+          in: query
+          description: 'Filtrer par nom (partiel)'
+          required: false
+          schema:
+            type: string
+            example: grippe
+        -
+          name: type
+          in: query
+          description: 'Filtrer par type'
+          required: false
+          schema:
+            type: string
+            example: virus
+        -
+          name: date
+          in: query
+          description: 'Filtrer par date de création (>=)'
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2024-01-01'
+        -
+          name: page
+          in: query
+          description: 'Numéro de la page pour la pagination'
+          required: false
+          schema:
+            type: integer
+            example: 1
       responses:
         '200':
-          description: 'Liste des maladies'
+          description: 'Liste paginée des maladies filtrées'
+          content:
+            application/json:
+              schema:
+                properties:
+                  current_page: { type: integer, example: 1 }
+                  data: { type: array, items: { properties: { id: { type: integer, example: 1 }, name: { type: string, example: Grippe }, type: { type: string, example: Virus }, description: { type: string, example: 'Infection respiratoire...' } }, type: object } }
+                  total: { type: integer, example: 50 }
+                  per_page: { type: integer, example: 10 }
+                  last_page: { type: integer, example: 5 }
+                type: object
   /api/maladies/store:
     post:
       tags:
@@ -31,10 +75,8 @@ paths:
               properties:
                 name:
                   type: string
-                  example: Grippe
                 description:
                   type: string
-                  example: 'Infection respiratoire'
               type: object
       responses:
         '201':

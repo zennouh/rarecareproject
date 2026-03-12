@@ -19,14 +19,18 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-// CRUD routes for MaladieController
 $router->group(['prefix' => 'maladies'], function () use ($router) {
+
     $router->get('/', 'MaladieController@index');
-    $router->post('/', 'MaladieController@store');
+
+    
+    $router->get('/create', 'MaladieController@create'); // <--- Hna fin khassha tkoun
+    $router->post('/store', 'MaladieController@store');
+    
     $router->get('{id}', 'MaladieController@show');
     $router->put('{id}', 'MaladieController@update');
     $router->delete('{id}', 'MaladieController@destroy');
 });
 
 
-Route::apiResource('maladies', MaladieController::class);
+// Route::apiResource('maladies', MaladieController::class);
