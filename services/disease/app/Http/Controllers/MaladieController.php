@@ -6,23 +6,89 @@ use App\Models\Maladie;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA; 
 
-#[OA\Info(title: "RareCare API", version: "1.0.0", description: "Documentation de l'API")]
+#[OA\Info(title: "MALADIES API", version: "1.0.0", description: "Documentation de l'API")]
 #[OA\Server(url: "http://localhost:8000", description: "Serveur Local")]
+
 class MaladieController extends Controller
 {
-    #[OA\Get(
-        path: "/api/maladies",
-        summary: "Lister toutes les maladies",
-        tags: ["Maladie"],
-        responses: [
-            new OA\Response(response: 200, description: "Liste des maladies")
-        ]
-    )]
-    public function index()
-    {
-        $maladies = Maladie::all();
-        return response()->json($maladies);
+#[OA\Get(
+    path: "/api/maladies",
+    summary: "Lister toutes les maladies avec filtres et pagination",
+    tags: ["Maladie"],
+    parameters: [
+        new OA\Parameter(
+            name: "name",
+            in: "query",
+            description: "Filtrer par nom (partiel)",
+            required: false,
+            schema: new OA\Schema(type: "string")
+        ),
+        new OA\Parameter(
+            name: "type",
+            in: "query",
+            description: "Filtrer par type",
+            required: false,
+            schema: new OA\Schema(type: "string")
+        ),
+        new OA\Parameter(
+            name: "date",
+            in: "query",
+            description: "Filtrer par date de création (>",
+            required: false,
+            schema: new OA\Schema(type: "string", format: "date")
+        ),
+        new OA\Parameter(
+            name: "page",
+            in: "query",
+            description: "Numéro de la page pour la pagination",
+            required: false,
+            schema: new OA\Schema(type: "integer")
+        )
+    ],
+    responses: [
+        new OA\Response(
+            response: 200, 
+            description: "Liste paginée des maladies filtrées",
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "current_page", type: "integer"),
+                    new OA\Property(property: "data", type: "array", items: new OA\Items(
+                        properties: [
+                            new OA\Property(property: "id", type: "integer"),
+                            new OA\Property(property: "name", type: "string"),
+                            new OA\Property(property: "type", type: "string"),
+                            new OA\Property(property: "description", type: "string")
+                        ]
+                    )),
+                    new OA\Property(property: "total", type: "integer"),
+                    new OA\Property(property: "per_page", type: "integer"),
+                    new OA\Property(property: "last_page", type: "integer")
+                ]
+            )
+        )
+    ]
+)]
+
+  public function index(Request $request)
+{
+    $query = Maladie::query();
+
+    if ($request->has('name')) {
+        $query->where('name', 'like', '%' . $request->name . '%');
     }
+
+    // if ($request->has('type')) {
+    //     $query->where('type', $request->type);
+    // }
+
+    if ($request->has('date')) {
+        $query->whereDate('created_at', '>=', $request->date);
+    }
+
+    $maladies = $query->paginate(10);
+    return response()->json($maladies);
+}
+
 
     #[OA\Post(
         path: "/api/maladies/store",
@@ -41,7 +107,7 @@ class MaladieController extends Controller
             new OA\Response(response: 201, description: "Maladie créée avec succès"),
             new OA\Response(response: 422, description: "Erreur de validation")
         ]
-    )]
+    )]  
     public function store(Request $request)
     {
         $maladie = Maladie::create($request->all());
@@ -71,6 +137,8 @@ class MaladieController extends Controller
         $maladie = Maladie::findOrFail($id);
         return response()->json($maladie);
     }
+
+
 
     #[OA\Put(
         path: "/api/maladies/{id}",
