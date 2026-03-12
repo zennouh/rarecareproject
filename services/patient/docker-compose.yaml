@@ -12,6 +12,7 @@ services:
       - patients_db
     networks:
       - patients_network
+      - app_network
 
   patients_db:
     image: postgres:16
@@ -26,28 +27,29 @@ services:
       - patients_db_data:/var/lib/postgresql/data
     networks:
       - patients_network
-
-
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq_container
-    ports:
-      - "5672:5672"     
-      - "15672:15672"   
-    environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    networks:
       - app_network
-      - patients_network
+
+
+  # rabbitmq:
+  #   image: rabbitmq:3-management
+  #   container_name: rabbitmq_container
+  #   ports:
+  #     - "5672:5672"     
+  #     - "15672:15672"   
+  #   environment:
+  #     - RABBITMQ_DEFAULT_USER=guest
+  #     - RABBITMQ_DEFAULT_PASS=guest
+  #   volumes:
+  #     - rabbitmq_data:/var/lib/rabbitmq
+  #   networks:
+  #     - app_network
+  #     - patients_network
 
 networks:
   patients_network:
     driver: bridge
   app_network:
-    driver: bridge    
+    external: true    
 
 volumes:
   patients_db_data:
