@@ -13,6 +13,7 @@ class Treatment extends Model
         'start_date',
         'end_date',
         'status',
+        'ai_description',
     ];
 
     protected $hidden = [];

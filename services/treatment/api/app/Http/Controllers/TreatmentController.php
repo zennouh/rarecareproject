@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Treatment;
+use App\Services\AiTreatmentService;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreTreatmentRequest;
 use OpenApi\Attributes as OA;
@@ -13,6 +14,8 @@ use OpenApi\Attributes as OA;
 
 class TreatmentController extends Controller
 {
+    public function __construct(private AiTreatmentService $aiService) {}
+
     #[OA\Get(
         path: "/api/treatments",
         summary: "List all treatments with pagination",
@@ -31,7 +34,8 @@ class TreatmentController extends Controller
                                 new OA\Property(property: "medication_name", type: "string", example: "Aspirin"),
                                 new OA\Property(property: "dosage", type: "string", example: "500mg"),
                                 new OA\Property(property: "frequency", type: "string", example: "3x/day"),
-                                new OA\Property(property: "start_date", type: "string", format: "date", example: "2026-03-11")
+                                new OA\Property(property: "start_date", type: "string", format: "date", example: "2026-03-11"),
+                                new OA\Property(property: "ai_description", type: "string", example: "AI Generated Guidance...")
                             ]
                         )),
                         new OA\Property(property: "total", type: "integer", example: 50),
@@ -59,7 +63,8 @@ class TreatmentController extends Controller
                     new OA\Property(property: "medication_name", type: "string", example: "Aspirin"),
                     new OA\Property(property: "dosage", type: "string", example: "500mg"),
                     new OA\Property(property: "frequency", type: "string", example: "3x/day"),
-                    new OA\Property(property: "start_date", type: "string", format: "date", example: "2026-03-11")
+                    new OA\Property(property: "start_date", type: "string", format: "date", example: "2026-03-11"),
+                    new OA\Property(property: "ai_description", type: "string", example: "AI Generated Guidance...")
                 ]
             )
         ),
@@ -71,6 +76,13 @@ class TreatmentController extends Controller
     public function store(Request $request)
     {
         $validateData = StoreTreatmentRequest::validate($request);
+
+        $aiDescription = $this->aiService->generateInfo(
+            $validateData['medication_name'],
+            $validateData['dosage'],
+            $validateData['frequency']
+        );
+        $validateData['ai_description'] = $aiDescription;
 
         $treatment = Treatment::create($validateData);
 

@@ -58,6 +58,10 @@
                                                         "type": "string",
                                                         "format": "date",
                                                         "example": "2026-03-11"
+                                                    },
+                                                    "ai_description": {
+                                                        "type": "string",
+                                                        "example": "AI Generated Guidance..."
                                                     }
                                                 },
                                                 "type": "object"
@@ -122,6 +126,10 @@
                                         "type": "string",
                                         "format": "date",
                                         "example": "2026-03-11"
+                                    },
+                                    "ai_description": {
+                                        "type": "string",
+                                        "example": "AI Generated Guidance..."
                                     }
                                 },
                                 "type": "object"

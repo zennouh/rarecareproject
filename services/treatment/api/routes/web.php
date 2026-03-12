@@ -30,8 +30,8 @@ $router->get('api/documentation', function() {
     return response(file_get_contents($path), 200)->header('Content-Type', 'text/html');
 });
 
-$router->get('/treatments', 'TreatmentController@index');
-$router->post('/treatments', 'TreatmentController@store');
-$router->get('/treatments/{id}', 'TreatmentController@show');
-$router->put('/treatments/{id}', 'TreatmentController@update');
-$router->delete('/treatments/{id}', 'TreatmentController@destroy');
+$router->get('api/treatments', 'TreatmentController@index');
+$router->post('api/treatments', 'TreatmentController@store');
+$router->get('api/treatments/{id}', 'TreatmentController@show');
+$router->put('api/treatments/{id}', 'TreatmentController@update');
+$router->delete('api/treatments/{id}', 'TreatmentController@destroy');
