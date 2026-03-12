@@ -35,3 +35,6 @@ $router->post('api/treatments', 'TreatmentController@store');
 $router->get('api/treatments/{id}', 'TreatmentController@show');
 $router->put('api/treatments/{id}', 'TreatmentController@update');
 $router->delete('api/treatments/{id}', 'TreatmentController@destroy');
+
+//  exporting PDF report
+$router->get('api/export-pdf', 'ReportController@exportPdf');
