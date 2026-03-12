@@ -26,7 +26,8 @@ $app = new Laravel\Lumen\Application(
 $app->withFacades();
 
 $app->withEloquent();
-
+$app->register(\Barryvdh\DomPDF\ServiceProvider::class);
+$app->alias('dompdf.wrapper', \Barryvdh\DomPDF\PDF::class);
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings

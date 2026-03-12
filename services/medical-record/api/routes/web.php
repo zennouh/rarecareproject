@@ -26,4 +26,5 @@ $router->group(['prefix'=>'api/medical-records'],function() use($router){
     $router->post('/create','MedicalRecordController@create');
     $router->put('/update/{id}','MedicalRecordController@update');
     $router->delete('/delete/{id}','MedicalRecordController@destroy');
+    $router->get('/{id}/generatePdf','MedicalRecordController@generatePdf');
 });
