@@ -113,3 +113,8 @@ $app->router->group([
 });
 
 return $app;
+
+
+$app->register(Barryvdh\DomPDF\ServiceProvider::class);
+class_alias(Barryvdh\DomPDF\Facade\Pdf::class, 'Pdf');
+
