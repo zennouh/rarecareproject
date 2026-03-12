@@ -21,7 +21,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $fillable = [
         'name',
         'email',
-        'password'
+        'password',
+        'role'
     ];
 
     /**
@@ -35,7 +36,4 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
 
 
-    public function roles(){
-        return $this->belongsTo(User::class);
-    }
 }
