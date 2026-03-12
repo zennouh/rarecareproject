@@ -19,3 +19,11 @@ $router->get('/', function () use ($router) {
 $router->get('/me', function () use ($router) {
     return 'hhhhh';
 });
+
+$router->group(['prefix'=>'api/medical-records'],function() use($router){
+    $router->get('/','MedicalRecordController@index');
+    $router->get('/{id}','MedicalRecordController@show');
+    $router->post('/create','MedicalRecordController@create');
+    $router->put('/update/{id}','MedicalRecordController@update');
+    $router->delete('/delete/{id}','MedicalRecordController@destroy');
+});
