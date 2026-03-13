@@ -1,7 +1,15 @@
 framework:
     messenger:
         transports:
-            async: '%env(MESSENGER_TRANSPORT_DSN)%'
+            async:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                options:
+                    exchange:
+                        name: patient_events
+                        type: topic
+                    queues:
+                        patient_created_queue:
+                        binding_keys: ["patient.created"]
 
         routing:
-            App\Message\Patient: async
+            App\Message\PatientCreate: async

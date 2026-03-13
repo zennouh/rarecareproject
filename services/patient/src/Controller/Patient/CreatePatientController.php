@@ -4,11 +4,14 @@ namespace App\Controller\Patient;
 
 use App\Dtos\PatientDto as DtosPatientDto;
 use App\Entity\Patient;
+use App\Message\PatientCreate;
 use Doctrine\ORM\EntityManagerInterface;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class CreatePatientController extends AbstractController
@@ -64,7 +67,8 @@ final class CreatePatientController extends AbstractController
         ]
     )]
     public function __invoke(
-        #[MapRequestPayload(validationGroups: ['create'])] DtosPatientDto $patientDto
+        #[MapRequestPayload(validationGroups: ['create'])] DtosPatientDto $patientDto,
+         MessageBusInterface $messageBus
     ): JsonResponse {
         $patient = new Patient();
         $patient->setName($patientDto->name);
@@ -76,6 +80,11 @@ final class CreatePatientController extends AbstractController
 
         $this->entityManager->persist($patient);
         $this->entityManager->flush();
+
+        $messageBus->dispatch(
+            new PatientCreate(1),
+            [new AmqpStamp('patient.created')]
+        );
 
         return $this->json([
             'message' => 'Patient créé avec succès',

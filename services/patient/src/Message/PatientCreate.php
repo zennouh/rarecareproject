@@ -5,7 +5,7 @@ namespace App\Message;
 use Symfony\Component\Messenger\Attribute\AsMessage;
 
 #[AsMessage('async')]
-final class Patient
+final class PatientCreate
 {
     /*
      * Add whatever properties and methods you need

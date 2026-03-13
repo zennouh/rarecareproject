@@ -8,14 +8,11 @@ use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class ListPatientController extends AbstractController
 {
-    public function __construct(private PatientRepository $patientRepository)
-    {
-    }
+    public function __construct(private PatientRepository $patientRepository) {}
 
     #[Route('/api/patients', name: 'patient_list', methods: ['GET'])]
     #[OA\Tag(name: 'Patients')]
@@ -70,7 +67,7 @@ final class ListPatientController extends AbstractController
         #[MapQueryParameter(name: 'page', filter: FILTER_VALIDATE_INT)] ?int $page,
         #[MapQueryParameter(name: 'limit', filter: FILTER_VALIDATE_INT)] ?int $limit,
         #[MapQueryParameter(name: 'search')] ?string $search,
-        MessageBusInterface $messageBus
+       
     ): JsonResponse {
         $page = $page ?? 1;
         $limit = $limit ?? 5;
@@ -85,7 +82,7 @@ final class ListPatientController extends AbstractController
             'totalPages' => ceil(count($patients) / $limit),
         ];
 
-        $messageBus->dispatch(new MessagePatient(1));
+       
 
         return $this->json([
             'patients' => iterator_to_array($patients),
