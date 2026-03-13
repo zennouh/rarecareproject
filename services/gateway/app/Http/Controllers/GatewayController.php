@@ -12,7 +12,9 @@ class GatewayController extends Controller
   
     const GATEWAY_PATHS = [
         "patients" => "http://patients:8000/api/patients",
-        "dummyjson" => "https://dummyjson.com",
+        "disease"=>"http://localhost:8000/API/maladies ",
+        "treatment"=>"http://localhost:8006/api/treatments",
+        "authentication"=>"http://localhost:8001/"
     ];
 
     public function index(Request $request)
