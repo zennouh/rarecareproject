@@ -36,7 +36,6 @@ class JwtMiddleware
                 ], 404);
             }
 
-            // inject user dans request
             $request->auth = $user;
 
         } catch (\Exception $e) {
