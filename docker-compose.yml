@@ -1,0 +1,6 @@
+# docker-compose.yml (at root)
+include:
+  - services/gateway/docker-compose.yml
+  - services/patient/docker-compose.yml
+  - infrastructure/rabbitmq/docker-compose.yml
+  # - infrastructure/*/docker-compose.yml

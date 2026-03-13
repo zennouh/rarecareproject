@@ -56,7 +56,6 @@ class GatewayController extends Controller
                 $response->getStatusCode()
             );
         } catch (\Exception $e) {
-            Log::error("Gateway Error: " . $e->getMessage());
             return response()->json(['error' => 'Service connection failed'], 502);
         }
     }

@@ -1,7 +1,0 @@
-# docker-compose.yml (at root)
-include:
-  - services/patient/docker-compose.yaml
-  - services/gateway/docker-compose.yml
-  # - infrastructure/grafana/docker-compose.yaml
-  # - infrastructure/prometheus/docker-compose.yaml
-  - infrastructure/rabbitmq/docker-compose.yaml

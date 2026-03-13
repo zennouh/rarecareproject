@@ -8,7 +8,7 @@ services:
     container_name: gateway
     restart: unless-stopped
     ports:
-      - "${APP_PORT:-8006}:80"
+      - "8006:80"
     volumes:
       - .:/var/www/html
       - ./docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
@@ -18,7 +18,7 @@ services:
       - app_network  
 
 networks:
-  app_network:
-    external: true           
+    app_network:
+      external: true           
     
 
