@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: gateway
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8006}:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
+    env_file:
+      - .env
+    
+
