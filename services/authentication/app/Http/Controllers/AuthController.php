@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Firebase\JWT\JWT;
+use Dompdf\Dompdf;
 
 class AuthController extends Controller
 {
@@ -65,11 +66,34 @@ class AuthController extends Controller
     }
 
     /**
-     * Current user (protected route)
+     * Current user
      */
     public function me(Request $request)
     {
-        // user injecté par middleware
         return response()->json($request->auth);
+    }
+
+    /**
+     * generate pdf
+     */
+    public function generatePDF(Request $request)
+    {
+        $user = $request->auth;
+        $html = "
+        <h1> RareCare User Report</h1>
+        <p><strong>ID:</strong>{$user->id}</p>
+        <p><strong>Name:</strong>{$user->name}</p>
+        <p><strong>Email:</strong>{$user->email}</p>
+        <p><strong>role:</strong>{$user->role}</p>
+        <p><strong>Date:</strong>" . date('Y-m-d') . "</p>
+        ";
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4');
+        $dompdf->render();
+
+        return response($dompdf->output())
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="user-report.pdf"');
     }
 }
