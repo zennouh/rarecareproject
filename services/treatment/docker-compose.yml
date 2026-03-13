@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  treatment:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: treatment-service
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8006}:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
+    env_file:
+      - .env
+    depends_on:
+      - treatment-db
+    networks:
+      - treatment-network
+
+  treatment-db:
+    image: mysql:8.0
+    container_name: treatment-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password}
+      MYSQL_DATABASE: ${DB_DATABASE:-treatment_db}
+      MYSQL_USER: ${DB_USERNAME:-rarecare}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-rarecare_password}
+    ports:
+      - "${DB_PORT_EXPOSE:-33066}:3306"
+    volumes:
+      - treatment-db-data:/var/lib/mysql
+    networks:
+      - treatment-network
+
+networks:
+  treatment-network:
+    driver: bridge
+
+volumes:
+  treatment-db-data:
