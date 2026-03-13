@@ -12,9 +12,10 @@ class GatewayController extends Controller
   
     const GATEWAY_PATHS = [
         "patients" => "http://patients:8000/api/patients",
-        "disease"=>"http://localhost:8000/API/maladies ",
-        "treatment"=>"http://localhost:8006/api/treatments",
-        "authentication"=>"http://localhost:8001/"
+        "disease"=>"http://disease:8008/API/maladies ",
+        "treatment"=>"http://treatment:8007/api/treatments",
+        "authentication"=>"http://authentication:8001/",
+        "medical-record"=>"http://medical-record:8002/api/medical-records"
     ];
 
     public function index(Request $request)
@@ -34,6 +35,8 @@ class GatewayController extends Controller
         $serviceUrl = rtrim($serviceBase, '/') . ($extraPath ? '/' . $extraPath : '');
         $headers = $request->headers->all();
         unset($headers['host']);
+
+        dd($serviceUrl);
 
         $client = new Client(['timeout' => 10]); 
 

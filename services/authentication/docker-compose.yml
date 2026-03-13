@@ -29,7 +29,7 @@ services:
     ports:
       - "${DB_PORT_EXPOSE:-33061}:3306"
     volumes:
-      - . :/var/lib/mysql
+      - authentication-db-data:/var/lib/mysql
     networks:
       - authentication-network
 
