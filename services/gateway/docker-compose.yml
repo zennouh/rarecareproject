@@ -1,4 +1,4 @@
-version: '3.8'
+# version: '3.8'
 
 services:
   gateway:
@@ -14,5 +14,11 @@ services:
       - ./docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
     env_file:
       - .env
+    networks:
+      - app_network  
+
+networks:
+  app_network:
+    external: true           
     
 
