@@ -1,0 +1,153 @@
+openapi: 3.0.0
+info:
+  title: 'MALADIES API'
+  description: "Documentation de l'API"
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost:8000'
+    description: 'Serveur Local'
+paths:
+  /api/maladies:
+    get:
+      tags:
+        - Maladie
+      summary: 'Lister toutes les maladies avec filtres et pagination'
+      operationId: 468a6ccab486087f8b8394f8f5dc0d63
+      parameters:
+        -
+          name: name
+          in: query
+          description: 'Filtrer par nom (partiel)'
+          required: false
+          schema:
+            type: string
+            example: grippe
+        -
+          name: type
+          in: query
+          description: 'Filtrer par type'
+          required: false
+          schema:
+            type: string
+            example: virus
+        -
+          name: date
+          in: query
+          description: 'Filtrer par date de création (>=)'
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2024-01-01'
+        -
+          name: page
+          in: query
+          description: 'Numéro de la page pour la pagination'
+          required: false
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: 'Liste paginée des maladies filtrées'
+          content:
+            application/json:
+              schema:
+                properties:
+                  current_page: { type: integer, example: 1 }
+                  data: { type: array, items: { properties: { id: { type: integer, example: 1 }, name: { type: string, example: Grippe }, type: { type: string, example: Virus }, description: { type: string, example: 'Infection respiratoire...' } }, type: object } }
+                  total: { type: integer, example: 50 }
+                  per_page: { type: integer, example: 10 }
+                  last_page: { type: integer, example: 5 }
+                type: object
+  /api/maladies/store:
+    post:
+      tags:
+        - Maladie
+      summary: 'Créer une nouvelle maladie'
+      operationId: ea90b36949dce842ff3b9ba32df3ef61
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+              type: object
+      responses:
+        '201':
+          description: 'Maladie créée avec succès'
+        '422':
+          description: 'Erreur de validation'
+  '/api/maladies/{id}':
+    get:
+      tags:
+        - Maladie
+      summary: 'Afficher une maladie spécifique'
+      operationId: e12d005f978a31ae522b8a4caa8d7144
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID de la maladie'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Maladie trouvée'
+        '404':
+          description: 'Maladie non trouvée'
+    put:
+      tags:
+        - Maladie
+      summary: 'Mettre à jour une maladie'
+      operationId: ad499761e2396f9be20cfd6ceb077a61
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+              type: object
+      responses:
+        '200':
+          description: 'Maladie mise à jour'
+        '404':
+          description: 'Maladie non trouvée'
+    delete:
+      tags:
+        - Maladie
+      summary: 'Supprimer une maladie'
+      operationId: 6c9c6973e341c1730883cd308c183d24
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Maladie supprimée'
+        '404':
+          description: 'Maladie non trouvée'
+tags:
+  -
+    name: Maladie
+    description: Maladie

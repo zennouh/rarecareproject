@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 services:
   disease:
@@ -8,7 +8,7 @@ services:
     container_name: disease-service
     restart: unless-stopped
     ports:
-      - "${APP_PORT:-8003}:80"
+      - "8000:80"
     volumes:
       - .:/var/www/html
       - ./docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
