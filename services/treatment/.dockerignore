@@ -18,7 +18,6 @@ docs/
 # Docker files (not needed inside container)
 docker-compose.yml
 docker-compose.override.yml
-docker/
 
 # Compiled and Dependency Folders
 # (Dockerfiles install their own dependencies)
