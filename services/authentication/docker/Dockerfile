@@ -1,20 +1,34 @@
+<<<<<<< HEAD:services/medical-dossier/Dockerfile
+FROM php:8.4-cli
+
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    libpq-dev \
+    libzip-dev \
+    zip \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip opcache \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pecl install amqp \
+&& docker-php-ext-enable amqp
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+=======
 # Use PHP 8.3 Nginx image
 FROM webdevops/php-nginx:8.3-alpine
+>>>>>>> main:services/authentication/docker/Dockerfile
 
-# Set working directory
 WORKDIR /var/www/html
 
-# Install system dependencies and PHP extensions
-RUN apk add --no-cache \
-    libpng-dev \
-    libzip-dev \
-    libxml2-dev \
-    oniguruma-dev \
-    postgresql-dev \
-    icu-dev \
-    git \
-    unzip
+EXPOSE 8000
 
+<<<<<<< HEAD:services/medical-dossier/Dockerfile
+CMD php -S 0.0.0.0:8000 public/index.php
+=======
 RUN docker-php-ext-install \
     pdo_mysql \
     pdo_pgsql \
@@ -40,3 +54,4 @@ COPY . .
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html
+>>>>>>> main:services/authentication/docker/Dockerfile
