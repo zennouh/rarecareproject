@@ -4,6 +4,7 @@ include:
   - services/patient/docker-compose.yml
   - services/disease/docker-compose.yml
   - services/treatment/docker-compose.yml
+  - services/medical-record/docker-compose.yml
   - services/authentication/docker-compose.yml
   - infrastructure/rabbitmq/docker-compose.yml
   # - infrastructure/*/docker-compose.yml

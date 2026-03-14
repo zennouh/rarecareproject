@@ -32,10 +32,13 @@ services:
       - authentication-db-data:/var/lib/mysql
     networks:
       - authentication-network
+      - app_network
 
 networks:
   authentication-network:
     driver: bridge
+  app_network:
+    external: true 
 
 volumes:
   authentication-db-data:

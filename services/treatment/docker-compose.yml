@@ -8,16 +8,17 @@ services:
     container_name: treatment-service
     restart: unless-stopped
     ports:
-      - "${APP_PORT:-8007}:80"
+      - "${APP_PORT:-8007}:8007"
     volumes:
       - .:/var/www/html
-      - ./docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
+      # - ./docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
     env_file:
       - .env
     depends_on:
       - treatment-db
     networks:
       - treatment-network
+      - app_network
 
   treatment-db:
     image: mysql:8.0
@@ -34,10 +35,13 @@ services:
       - treatment-db-data:/var/lib/mysql
     networks:
       - treatment-network
+      - app_network
 
 networks:
   treatment-network:
     driver: bridge
+  app_network:
+    external: true     
 
 volumes:
   treatment-db-data:

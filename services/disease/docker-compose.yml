@@ -6,23 +6,24 @@ services:
       context: .
       dockerfile: docker/Dockerfile
     container_name: disease-service
-    restart: unless-stopped
+    #restart: unless-stopped
     ports:
-      - "8008:80"
+      - "8008:8008"
     volumes:
       - .:/var/www/html
-      - ./docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
+#      - ./docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
     env_file:
       - .env
     depends_on:
       - disease-db
     networks:
       - disease-network
+      - app_network
 
   disease-db:
     image: mysql:8.0
     container_name: disease-db
-    restart: unless-stopped
+    #restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password}
       MYSQL_DATABASE: ${DB_DATABASE:-disease_db}
@@ -34,10 +35,14 @@ services:
       - disease-db-data:/var/lib/mysql
     networks:
       - disease-network
+      - app_network
 
 networks:
   disease-network:
     driver: bridge
+  app_network:
+    external: true    
 
 volumes:
   disease-db-data:
+  rabbitmq_data:

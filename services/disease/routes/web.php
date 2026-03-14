@@ -15,16 +15,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
-});
-
 $router->group(['prefix' => 'maladies'], function () use ($router) {
 
     $router->get('/', 'MaladieController@index');
 
     
-    $router->get('/create', 'MaladieController@create'); // <--- Hna fin khassha tkoun
+    // $router->get('/create', 'MaladieController@create'); // <--- Hna fin khassha tkoun
     $router->post('/store', 'MaladieController@store');
     
     $router->get('{id}', 'MaladieController@show');

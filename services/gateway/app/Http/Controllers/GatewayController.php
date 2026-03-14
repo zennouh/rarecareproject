@@ -3,19 +3,17 @@
 namespace App\Http\Controllers;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class GatewayController extends Controller
 {
-  
+
     const GATEWAY_PATHS = [
         "patients" => "http://patients:8000/api/patients",
-        "disease"=>"http://disease:8008/API/maladies ",
-        "treatment"=>"http://treatment:8007/api/treatments",
-        "authentication"=>"http://authentication:8001/",
-        "medical-record"=>"http://medical-record:8002/api/medical-records"
+        "disease" => "http://disease:8008/maladies",
+        "treatment" => "http://treatment:8007/api/treatments",
+        "authentication" => "http://authentication:8001/",
+        "medical-record" => "http://medical-record:8002/api/medical-records"
     ];
 
     public function index(Request $request)
@@ -35,19 +33,18 @@ class GatewayController extends Controller
         $serviceUrl = rtrim($serviceBase, '/') . ($extraPath ? '/' . $extraPath : '');
         $headers = $request->headers->all();
         unset($headers['host']);
+        // dd($serviceUrl);
 
-        dd($serviceUrl);
-
-        $client = new Client(['timeout' => 10]); 
+        $client = new Client(['timeout' => 10]);
 
         try {
             $options = [
                 'query'   => $request->query(),
                 'headers' => $headers,
-                'http_errors' => false, 
+                'http_errors' => false,
             ];
 
-           
+
             if ($request->isMethod('POST') || $request->isMethod('PUT') || $request->isMethod('PATCH')) {
                 $options['json'] = $request->all();
             }
@@ -61,7 +58,10 @@ class GatewayController extends Controller
                 $response->getStatusCode()
             );
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Service connection failed'], 502);
+            return response()->json([
+                'error' => 'Service connection failed',
+                'message' => $e->getMessage()
+            ], 502);
         }
     }
 }

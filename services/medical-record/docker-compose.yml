@@ -1,4 +1,4 @@
-version: '3.8'
+# version: '3.8'
 
 services:
   medical-record:
@@ -8,16 +8,17 @@ services:
     container_name: medical-record-service
     restart: unless-stopped
     ports:
-      - "8004:80"
+      - "8002:8002"
     volumes:
       - .:/var/www/html
-      - ./docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
+      # - ./docker/nginx.conf:/opt/docker/etc/nginx/vhost.conf:ro
     env_file:
       - .env
     depends_on:
       - medical-record-db
     networks:
       - medical-record-network
+      - app_network
 
   medical-record-db:
     image: mysql:8.0
@@ -34,10 +35,13 @@ services:
       - medical-record-db-data:/var/lib/mysql
     networks:
       - medical-record-network
+      - app_network
 
 networks:
   medical-record-network:
     driver: bridge
+  app_network:
+    external: true     
 
 volumes:
   medical-record-db-data:
