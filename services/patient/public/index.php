@@ -1,7 +1,9 @@
 <?php
-header('Content-Type: application/json');
-echo json_encode([
-    'service' => 'patients',
-    'status' => 'ok',
-    'message' => 'Welcome to Patients Service'
-]);
+
+use App\Kernel;
+
+require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
+
+return function (array $context) {
+    return new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
+};

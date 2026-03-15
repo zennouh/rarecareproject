@@ -61,15 +61,17 @@ class MaladieController extends Controller
     )]
     public function store(Request $request)
     {
-        $request->validate([
+        $valide = $request->validate([
             'name' => 'required|string',
             'description' => 'nullable'
         ]);
-
+        if (!$valide) {
+            return response()->json(['message' => 'Erreur de validation']);
+        }
         $maladie = Maladie::create($request->all());
 
         return response()->json([
-            'message' => 'Maladie créée avec succès',
+            'message' => 'Maladie creee avec succès',
             'data' => $maladie
         ], 201);
     }
@@ -79,7 +81,7 @@ class MaladieController extends Controller
         summary: "Détails d'une maladie",
         tags: ["Maladie"],
         responses: [
-            new OA\Response(response: 200, description: "Succès"),
+            new OA\Response(response: 200, description: "Succes"),
             new OA\Response(response: 404, description: "Non trouvée")
         ]
     )]

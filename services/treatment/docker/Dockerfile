@@ -1,47 +1,27 @@
-# Use PHP 8.3 Nginx image
-FROM webdevops/php-nginx:8.3-alpine
+FROM php:8.4-cli
 
-# Set working directory
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    libpq-dev \
+    libzip-dev \
+    zip \
+    librabbitmq-dev \
+    libssl-dev \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip opcache \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pecl install amqp \
+    && docker-php-ext-enable amqp
+
 WORKDIR /var/www/html
 
-# Install system dependencies and PHP extensions
-RUN apk add --no-cache \
-    libpng-dev \
-    libzip-dev \
-    libxml2-dev \
-    oniguruma-dev \
-    postgresql-dev \
-    icu-dev \
-    git \
-    unzip
+EXPOSE 8007
 
-RUN docker-php-ext-install \
-    pdo_mysql \
-    pdo_pgsql \
-    mbstring \
-    exif \
-    pcntl \
-    bcmath \
-    gd \
-    zip \
-    intl
-
-# Set Document Root for webdevops image
-ENV WEB_DOCUMENT_ROOT=/var/www/html/public
-
-# Copy local Nginx configuration
-COPY docker/nginx.conf /opt/docker/etc/nginx/vhost.conf
-
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Copy application files
-COPY . .
-
-# Install Composer dependencies and generate API docs
-RUN cd api && composer install --no-dev --optimize-autoloader --no-interaction \
-    && mkdir -p storage/api-docs \
-    && ./vendor/bin/openapi --output storage/api-docs/api-docs.json app/Http
-
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html
+CMD ["php", "-S", "0.0.0.0:8007", "-t", "api/public"]
