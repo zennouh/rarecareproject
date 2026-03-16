@@ -16,7 +16,7 @@ class GatewayController extends Controller
         "medical-record" => "http://medical-record:8002/api/medical-records"
     ];
 
-    public function index(Request $request)
+    private function index(Request $request)
     {
         $path = $request->path();
         $pathParts = explode('/', $path);
@@ -33,7 +33,7 @@ class GatewayController extends Controller
         $serviceUrl = rtrim($serviceBase, '/') . ($extraPath ? '/' . $extraPath : '');
         $headers = $request->headers->all();
         unset($headers['host']);
-        // dd($serviceUrl);
+        // dd($serviceUrl, $request->isMethod("POST"));
 
         $client = new Client(['timeout' => 10]);
 
@@ -52,6 +52,7 @@ class GatewayController extends Controller
             $response = $client->request($request->method(), $serviceUrl, $options);
 
             $data = json_decode((string) $response->getBody(), true);
+            // dd($data, $response->getStatusCode());
             // dd((string) $response->getBody());
             return response()->json(
                 $data,
@@ -63,5 +64,24 @@ class GatewayController extends Controller
                 'message' => $e->getMessage()
             ], 502);
         }
+    }
+
+    public function get(Request $request)
+    {
+        // dd($request->path(), "GET data");
+        return $this->index($request);
+    }
+    public function post(Request $request)
+    {
+        // dd($request->post(), "POST data");
+        return $this->index($request);
+    }
+    public function put(Request $request)
+    {
+        return $this->index($request);
+    }
+    public function delete(Request $request)
+    {
+        return $this->index($request);
     }
 }

@@ -17,5 +17,7 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->get('/{path:.*}', "GatewayController@index");
-
+$router->get('/{path:.*}', "GatewayController@get");
+$router->post('/{path:.*}', "GatewayController@post");
+$router->put('/{path:.*}', "GatewayController@put");
+$router->delete('/{path:.*}', "GatewayController@delete");

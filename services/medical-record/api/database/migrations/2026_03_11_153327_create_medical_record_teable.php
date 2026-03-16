@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->unsignedBigInteger('maladie_id');
-            $table->unsignedBigInteger('patient_id');
-            $table->unsignedBigInteger('treatement_id');
-            $table->text('description');
+            // $table->unsignedBigInteger('patient_id');
+            $table->unsignedBigInteger('treatement_id')->nullable();
+            // $table->text('description');
             $table->string('pdf_path')->nullable();
             $table->timestamps();
         });

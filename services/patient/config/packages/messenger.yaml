@@ -3,13 +3,14 @@ framework:
         transports:
             async:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                serializer: App\Serializer\RabbitMQMessageSerializer
                 options:
                     exchange:
-                        name: patient_events
+                        name: rarecare_events
                         type: topic
                     queues:
-                        patient_created_queue:
-                        binding_keys: ["patient.created"]
+                        dossier_medical_message:
+                            binding_keys: ["get_d_m"]
 
         routing:
             App\Message\PatientCreate: async

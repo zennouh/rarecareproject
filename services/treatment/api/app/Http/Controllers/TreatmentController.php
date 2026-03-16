@@ -6,6 +6,8 @@ use App\Models\Treatment;
 use App\Services\AiTreatmentService;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreTreatmentRequest;
+use App\Jobs\TestJob;
+use App\Services\RabbitMq;
 use OpenApi\Attributes as OA;
 
 #[OA\Info(title: "Treatment API", version: "1.0.0", description: "Micro-service for managing rare disease treatments")]
@@ -48,6 +50,14 @@ class TreatmentController extends Controller
     )]
     public function index()
     {
+
+        dispatch(new TestJob(123))->onQueue('dossier_medical_message');
+        // RabbitMq::makeMessage([
+        //     'event' => 'patient.created',
+        //     'data' => [
+        //         'patientId' => 123,
+        //     ]
+        // ]);
         return response()->json(Treatment::paginate(10), 200);
     }
     #[OA\Post(

@@ -3,91 +3,96 @@
 namespace App\Http\Controllers;
 
 use App\Models\Maladie;
+use App\Services\RabbitMq;
+use App\Services\RabbitMqPublishService;
 use Illuminate\Http\Request;
-use OpenApi\Attributes as OA; 
+use OpenApi\Attributes as OA;
 
 #[OA\Info(title: "MALADIES API", version: "1.0.0", description: "Documentation de l'API")]
 #[OA\Server(url: "http://localhost:8000", description: "Serveur Local")]
 
 class MaladieController extends Controller
 {
-#[OA\Get(
-    path: "/api/maladies",
-    summary: "Lister toutes les maladies avec filtres et pagination",
-    tags: ["Maladie"],
-    parameters: [
-        new OA\Parameter(
-            name: "name",
-            in: "query",
-            description: "Filtrer par nom (partiel)",
-            required: false,
-            schema: new OA\Schema(type: "string")
-        ),
-        new OA\Parameter(
-            name: "type",
-            in: "query",
-            description: "Filtrer par type",
-            required: false,
-            schema: new OA\Schema(type: "string")
-        ),
-        new OA\Parameter(
-            name: "date",
-            in: "query",
-            description: "Filtrer par date de création (>",
-            required: false,
-            schema: new OA\Schema(type: "string", format: "date")
-        ),
-        new OA\Parameter(
-            name: "page",
-            in: "query",
-            description: "Numéro de la page pour la pagination",
-            required: false,
-            schema: new OA\Schema(type: "integer")
-        )
-    ],
-    responses: [
-        new OA\Response(
-            response: 200, 
-            description: "Liste paginée des maladies filtrées",
-            content: new OA\JsonContent(
-                properties: [
-                    new OA\Property(property: "current_page", type: "integer"),
-                    new OA\Property(property: "data", type: "array", items: new OA\Items(
-                        properties: [
-                            new OA\Property(property: "id", type: "integer"),
-                            new OA\Property(property: "name", type: "string"),
-                            new OA\Property(property: "type", type: "string"),
-                            new OA\Property(property: "description", type: "string")
-                        ]
-                    )),
-                    new OA\Property(property: "total", type: "integer"),
-                    new OA\Property(property: "per_page", type: "integer"),
-                    new OA\Property(property: "last_page", type: "integer")
-                ]
+    #[OA\Get(
+        path: "/api/maladies",
+        summary: "Lister toutes les maladies avec filtres et pagination",
+        tags: ["Maladie"],
+        parameters: [
+            new OA\Parameter(
+                name: "name",
+                in: "query",
+                description: "Filtrer par nom (partiel)",
+                required: false,
+                schema: new OA\Schema(type: "string")
+            ),
+            new OA\Parameter(
+                name: "type",
+                in: "query",
+                description: "Filtrer par type",
+                required: false,
+                schema: new OA\Schema(type: "string")
+            ),
+            new OA\Parameter(
+                name: "date",
+                in: "query",
+                description: "Filtrer par date de création (>",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date")
+            ),
+            new OA\Parameter(
+                name: "page",
+                in: "query",
+                description: "Numéro de la page pour la pagination",
+                required: false,
+                schema: new OA\Schema(type: "integer")
             )
-        )
-    ]
-)]
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Liste paginée des maladies filtrées",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "current_page", type: "integer"),
+                        new OA\Property(property: "data", type: "array", items: new OA\Items(
+                            properties: [
+                                new OA\Property(property: "id", type: "integer"),
+                                new OA\Property(property: "name", type: "string"),
+                                new OA\Property(property: "type", type: "string"),
+                                new OA\Property(property: "description", type: "string")
+                            ]
+                        )),
+                        new OA\Property(property: "total", type: "integer"),
+                        new OA\Property(property: "per_page", type: "integer"),
+                        new OA\Property(property: "last_page", type: "integer")
+                    ]
+                )
+            )
+        ]
+    )]
 
-  public function index(Request $request)
-{
-    $query = Maladie::query();
+    public function index(Request $request, RabbitMqPublishService $rabbitMq)
+    {
 
-    if ($request->has('name')) {
-        $query->where('name', 'like', '%' . $request->name . '%');
+
+
+        $query = Maladie::query();
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        // if ($request->has('type')) {
+        //     $query->where('type', $request->type);
+        // }
+
+        if ($request->has('date')) {
+            $query->whereDate('created_at', '>=', $request->date);
+        }
+
+        $maladies = $query->paginate(10);
+        return response()->json($maladies);
     }
-
-    // if ($request->has('type')) {
-    //     $query->where('type', $request->type);
-    // }
-
-    if ($request->has('date')) {
-        $query->whereDate('created_at', '>=', $request->date);
-    }
-
-    $maladies = $query->paginate(10);
-    return response()->json($maladies);
-}
 
 
     #[OA\Post(
@@ -99,7 +104,9 @@ class MaladieController extends Controller
             content: new OA\JsonContent(
                 properties: [
                     new OA\Property(property: "name", type: "string"),
-                    new OA\Property(property: "description", type: "string")
+                    new OA\Property(property: "description", type: "string"),
+                    new OA\Property(property: "dossier_name", type: "string")
+
                 ]
             )
         ),
@@ -107,10 +114,15 @@ class MaladieController extends Controller
             new OA\Response(response: 201, description: "Maladie créée avec succès"),
             new OA\Response(response: 422, description: "Erreur de validation")
         ]
-    )]  
-    public function store(Request $request)
+    )]
+    public function store(Request $request,  RabbitMqPublishService $rabbitMq)
     {
         $maladie = Maladie::create($request->all());
+
+        $rabbitMq->publish('maladie.created', [
+            'dossier_name' => $request->dossier_name,
+            'maladie_id' => $maladie->id,
+        ]);
         return response()->json($maladie, 201);
     }
 

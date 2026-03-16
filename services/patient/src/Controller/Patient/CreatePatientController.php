@@ -81,10 +81,10 @@ final class CreatePatientController extends AbstractController
         $this->entityManager->persist($patient);
         $this->entityManager->flush();
 
-        $messageBus->dispatch(
-            new PatientCreate(1),
-            [new AmqpStamp('patient.created')]
-        );
+        // $messageBus->dispatch(
+        //     new PatientCreate(1),
+        //     [new AmqpStamp('patient.created')]
+        // );
 
         return $this->json([
             'message' => 'Patient créé avec succès',

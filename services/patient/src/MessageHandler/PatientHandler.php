@@ -11,7 +11,7 @@ final class PatientHandler
 {
     public function __invoke(PatientCreate $message)
     {
-        dump("Patient created: " . $message->patientId);
+        dump("Patient created: ". $message->pat ?? "No patient ID provided");
 
     }
 }

@@ -13,6 +13,6 @@ final class PatientCreate
      */
 
     public function __construct(
-        public readonly int $patientId,
+        public readonly int $pat,
     ) {}
 }
