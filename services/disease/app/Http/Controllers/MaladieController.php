@@ -17,7 +17,7 @@ class MaladieController extends Controller
         responses: [
             new OA\Response(
                 response: 200,
-                description: "Liste paginée des maladies",
+                description: "Liste paginee des maladies",
                 content: new OA\JsonContent(
                     properties: [
                         new OA\Property(property: "current_page", type: "integer"),
@@ -52,10 +52,10 @@ class MaladieController extends Controller
 
     #[OA\Post(
         path: "/api/maladies",
-        summary: "Créer une maladie",
+        summary: "Creer une maladie",
         tags: ["Maladie"],
         responses: [
-            new OA\Response(response: 201, description: "Maladie créée avec succès"),
+            new OA\Response(response: 201, description: "Maladie creee avec succès"),
             new OA\Response(response: 422, description: "Erreur de validation")
         ]
     )]
@@ -78,11 +78,11 @@ class MaladieController extends Controller
 
     #[OA\Get(
         path: "/api/maladies/{id}",
-        summary: "Détails d'une maladie",
+        summary: "Details d'une maladie",
         tags: ["Maladie"],
         responses: [
             new OA\Response(response: 200, description: "Succes"),
-            new OA\Response(response: 404, description: "Non trouvée")
+            new OA\Response(response: 404, description: "Non trouvee")
         ]
     )]
     public function show($id)
@@ -90,11 +90,11 @@ class MaladieController extends Controller
         $maladie = Maladie::find($id);
 
         if (!$maladie) {
-            return response()->json(['message' => 'Maladie non trouvée'], 404);
+            return response()->json(['message' => 'Maladie non trouvee'], 404);
         }
 
         return response()->json([
-            'message' => 'Maladie trouvée',
+            'message' => 'Maladie trouvee',
             'data' => $maladie
         ], 200);
     }
@@ -104,8 +104,8 @@ class MaladieController extends Controller
         summary: "Modifier une maladie",
         tags: ["Maladie"],
         responses: [
-            new OA\Response(response: 200, description: "Mise à jour réussie"),
-            new OA\Response(response: 404, description: "Non trouvée")
+            new OA\Response(response: 200, description: "Mise à jour reussie"),
+            new OA\Response(response: 404, description: "Non trouvee")
         ]
     )]
     public function update(Request $request, $id)
@@ -113,7 +113,7 @@ class MaladieController extends Controller
         $maladie = Maladie::find($id);
 
         if (!$maladie) {
-            return response()->json(['message' => 'Maladie non trouvée'], 404);
+            return response()->json(['message' => 'Maladie non trouvee'], 404);
         }
 
         $request->validate(['name' => 'sometimes|required']);
@@ -130,8 +130,8 @@ class MaladieController extends Controller
         summary: "Supprimer une maladie",
         tags: ["Maladie"],
         responses: [
-            new OA\Response(response: 200, description: "Suppression réussie"),
-            new OA\Response(response: 404, description: "Non trouvée")
+            new OA\Response(response: 200, description: "Suppression reussie"),
+            new OA\Response(response: 404, description: "Non trouvee")
         ]
     )]
     public function destroy($id)
@@ -139,13 +139,13 @@ class MaladieController extends Controller
         $maladie = Maladie::find($id);
 
         if (!$maladie) {
-            return response()->json(['message' => 'Maladie non trouvée'], 404);
+            return response()->json(['message' => 'Maladie non trouvee'], 404);
         }
 
         $maladie->delete();
 
         return response()->json([
-            'message' => 'Maladie supprimée avec succès'
+            'message' => 'Maladie supprimee avec succes'
         ], 200);
     }
 }

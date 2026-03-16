@@ -19,8 +19,8 @@ use Illuminate\Support\Facades\Route;
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
-$router->get('/maladies', 'MaladieController@index');
-$router->post('/maladies', 'MaladieController@store');
-$router->get('/maladies/{id}', 'MaladieController@show');
-$router->put('/maladies/{id}', 'MaladieController@update');
-$router->delete('/maladies/{id}', 'MaladieController@destroy');
+$router->get('/api/maladies', 'MaladieController@index');
+$router->post('/api/maladies', 'MaladieController@store');
+$router->get('/api/maladies/{id}', 'MaladieController@show');
+$router->put('/api/maladies/{id}', 'MaladieController@update');
+$router->delete('/api/maladies/{id}', 'MaladieController@destroy');
