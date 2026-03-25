@@ -1,0 +1,47 @@
+# Version Control
+.git/
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# IDEs and Editors
+.idea/
+.vscode/
+
+# Environment Files (never bake secrets into images)
+.env
+.env.*
+!.env.example
+
+# Docker files (not needed inside container)
+docker-compose.yml
+docker-compose.override.yml
+
+# Compiled and Dependency Folders
+# (Dockerfiles install their own dependencies)
+**/node_modules/
+**/vendor/
+**/dist/
+**/build/
+
+# Logs and Temps
+**/storage/*.log
+**/storage/framework/cache/data/*
+**/storage/framework/sessions/*
+**/storage/framework/testing/*
+**/storage/framework/views/*
+**/*.log
+**/*.tmp
+**/*.temp
+
+# Test Data
+**/tests/
+**/phpunit.xml
+**/*.spec.js
+**/*.test.js
+
+# OS Files
+.DS_Store
+Thumbs.db

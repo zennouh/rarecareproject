@@ -1,42 +1,56 @@
-version: '3.8'
-
 services:
-  patient:
+  patients:
     build:
       context: .
-      dockerfile: docker/Dockerfile
-    container_name: patient-service
-    restart: unless-stopped
+      dockerfile: docker/dockerfile
+    container_name: patients_container 
     ports:
-      - "${APP_PORT:-8005}:80"
+      - "8000:8000"
     volumes:
-      - .:/var/www/html
-      - ./docker/apache.conf:/etc/apache2/sites-available/000-default.conf:ro
-    env_file:
-      - .env
+      - .:/var/www/html 
     depends_on:
-      - patient-db
+      - patients_db
     networks:
-      - patient-network
+      - patients_network
+      - app_network
 
-  patient-db:
-    image: postgres:15-alpine
-    container_name: patient-db
-    restart: unless-stopped
+  patients_db:
+    image: postgres:16
+    container_name: patients_db_container
     environment:
-      POSTGRES_USER: ${DB_USERNAME:-rarecare}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-rarecare_password}
-      POSTGRES_DB: ${DB_DATABASE:-patient_db}
+      - POSTGRES_USER=nouh
+      - POSTGRES_PASSWORD=nouh2001
+      - POSTGRES_DB=patients_db_name
     ports:
-      - "${DB_PORT_EXPOSE:-54321}:5432"
+      - "5432:5432"
     volumes:
-      - patient-db-data:/var/lib/postgresql/data
+      - patients_db_data:/var/lib/postgresql/data
     networks:
-      - patient-network
+      - patients_network
+      - app_network
+
+
+  # rabbitmq:
+  #   image: rabbitmq:3-management
+  #   container_name: rabbitmq_container
+  #   ports:
+  #     - "5672:5672"     
+  #     - "15672:15672"   
+  #   environment:
+  #     - RABBITMQ_DEFAULT_USER=guest
+  #     - RABBITMQ_DEFAULT_PASS=guest
+  #   volumes:
+  #     - rabbitmq_data:/var/lib/rabbitmq
+  #   networks:
+  #     - app_network
+  #     - patients_network
 
 networks:
-  patient-network:
+  patients_network:
     driver: bridge
+  app_network:
+    external: true    
 
 volumes:
-  patient-db-data:
+  patients_db_data:
+  rabbitmq_data:
